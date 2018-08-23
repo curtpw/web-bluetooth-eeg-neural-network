@@ -63,6 +63,147 @@
     <!-- endinject -->
 
     <style>
+
+    /***** RANGE SLIDER STYLES *****/
+       .range-slider {
+            z-index: 99;
+          margin: 18px 0 0 0;
+        }
+    
+        .range-slider {
+          width: 100%;
+        }
+        .sample-size-div{
+          width: 260px;
+          display: inline-block;
+          margin-top: 0px;
+        }
+        .sample-size-div .range-slider__value{
+          width: 18px;
+        }
+        .sample-size-div p.range-label{
+          text-align: center;
+        }
+        .range-slider__value.master-pose{
+          background-color: gray;
+        }
+    
+        .range-slider p{
+          margin: 0px;
+          margin-bottom: -8px;
+        }
+    
+        p.range-label{
+          color: white;
+          margin-bottom: -10px;
+          font-size: 11px;
+        }
+    
+        .range-slider__range {
+          -webkit-appearance: none;
+          width: calc(100% - (65px));
+          height: 5px;
+          border-radius: 5px;
+          background: #d7dcdf;
+          outline: none;
+          padding: 0;
+          margin: 0;
+        }
+        .range-slider__range.nn-architecture {
+    	    width: calc(100% - (110px));
+    	}
+    
+        .range-slider__range::-webkit-slider-thumb {
+          -webkit-appearance: none;
+                  appearance: none;
+      /*    width: 20px;
+          height: 20px;   */
+          width: 15px;
+          height: 15px;
+          border-radius: 50%;
+      /*    background: #2c3e50;   */
+          background: #dbca60;
+          cursor: pointer;
+          -webkit-transition: background .15s ease-in-out;
+          transition: background .15s ease-in-out;
+        }
+        .range-slider__range.transform {  /* these sliders no longer important so make smaller */
+          height: 5px;
+        }
+        .range-slider__range.transform::-webkit-slider-thumb {  /* these sliders no longer important so make smaller */
+                width: 15px;
+          height: 15px;
+        }
+        .range-slider__range::-webkit-slider-thumb:hover {
+          background: #1abc9c;
+        }
+        .range-slider__range:active::-webkit-slider-thumb {
+          background: #1abc9c;
+        }
+        .range-slider__range::-moz-range-thumb {
+          width: 20px;
+          height: 20px;
+          border: 0;
+          border-radius: 50%;
+          background: #2c3e50;
+          cursor: pointer;
+          -webkit-transition: background .15s ease-in-out;
+          transition: background .15s ease-in-out;
+        }
+        .range-slider__range::-moz-range-thumb:hover {
+          background: #1abc9c;
+        }
+        .range-slider__range:active::-moz-range-thumb {
+          background: #1abc9c; 
+          
+        }
+    
+        .range-slider__value {
+          display: inline-block;
+          position: relative;
+          font-size: 14px;
+          color: #fff;
+          line-height: 20px;
+          text-align: center;
+          border-radius: 3px;
+          background: #d2691e; 
+          padding: 5px 12px;
+          margin-left: 8px;
+        }
+        .range-slider__value:after {
+          position: absolute;
+          top: 8px;
+          left: -7px;
+          width: 0;
+          height: 0;
+          border-top: 7px solid transparent;
+          border-right: 7px solid #d9b32a;
+          border-bottom: 7px solid transparent;
+          content: '';
+        }
+    
+        ::-moz-range-track {
+          background: #d7dcdf;
+          border: 0;
+        }
+    
+        input::-moz-focus-inner,
+        input::-moz-focus-outer {
+          border: 0;
+        }
+    
+        .range-slider label {
+            position: absolute;
+            width: 20px;
+            margin-left: 5px;
+            margin-right: 5px;
+            text-align: center;
+            margin-top: 0px;
+            color: white;
+            font-size: 12px;
+        }
+    /***** END RANGE SLIDER STYLES *****/
+
         .getmdl-select{outline:none}
         .getmdl-select .mdl-textfield__input{cursor:pointer}
         .getmdl-select .selected{background-color:#ddd}
@@ -112,6 +253,14 @@
 
 		#connect{background-color: #00bcd4;}
 
+		#data-message div{
+			display: inline-block;
+			font-size: 18px;
+		}
+		.data-message-value{
+			color: rgba(255, 193, 7, 0.8);
+		}
+
     </style>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -145,8 +294,18 @@
 	            EEG Glasses Manager
 	        </span>
 
-            <button id="connect" class="btn mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-light-blue" style="margin-left: 10px;">
+            <button id="connect" class="btn mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-blue" style="margin-left: 10px;">
                 CONNECT
+            </button>
+
+			<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-yellow" style="margin-left: 10px;">
+                <i class="material-icons">trending_up</i>
+                Concentration Test Data
+            </button>
+
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-yellow" style="margin-left: 10px;">
+                <i class="material-icons">trending_down</i>
+                Relaxation Test Data
             </button>
 
             <div class="mdl-layout-spacer"></div>
@@ -348,28 +507,33 @@
                         	<div id="data-message">
 						    	<div>NN TRUE:&nbsp;<span class="message-nn-true data-message-value">0</span></div>
 						    	<div>NN FALSE:&nbsp;<span class="message-nn-false data-message-value">0</span></div>
-						    	<div>Neural Network 1&nbsp;<span class="nn-score-label">SCORE</span>:&nbsp;<span class="message-nn-score data-message-value">na</span></div>
+						    	<div>Neural Network 1&nbsp;<span class="nn-score-label data-message-value">SCORE</span>:&nbsp;<span class="message-nn-score data-message-value">na</span></div>
 						    </div>
 
-                            <div class="nn-manager__container">
-                            	<button id="collect-true" class="collect-true mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-light-blue">
-					                Collect True Data
-					            </button>
-					            <button id="collect-false" class="collect-false mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-light-blue">
-					                Collect False Data
-					            </button>
-					            <button id="clear" class="clear mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-light-blue">
-					                Clear Data
-					            </button>
-					            <button id="train-btn" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-light-blue">
-					                Train Neural Network
-					            </button>
-					            <button id="activate-btn" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-light-blue">
-					                Activate Neural Network
-					            </button>
-					            <button id="export-btn" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-light-blue">
-					                Export Neural Network
-					            </button>
+                            <div class="nn-manager__container">                           	
+                            	<div id="data-controls">
+	                            	<button id="collect-true" class="collect-true mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-yellow">
+						                Collect True Data
+						            </button>
+						            <button id="collect-false" class="collect-false mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-yellow">
+						                Collect False Data
+						            </button>
+						            <button id="clear" class="clear mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-yellow">
+						                Clear Data
+						            </button>
+						        </div>
+
+						        <div id="nn-controls">
+						            <button id="train-btn" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-red">
+						                Train Neural Network
+						            </button>
+						            <button id="activate-btn" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-red">
+						                Activate Neural Network
+						            </button>
+						            <button id="export-btn" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-red">
+						                Export Neural Network
+						            </button>
+						        </div>
 
 					            <!-- number of samples to collect every time one of the collection buttons is pressed -->
 					            <div class="range-slider sample-size-div">
@@ -377,6 +541,7 @@
 					                <input class="range-slider__range sample-size" type="range" value="25" min="25" max="300" step="25">
 					                <span class="range-slider__value">0</span>
 					            </div>
+					          
                             </div>
 
                             <!-- console messages -->
@@ -393,7 +558,13 @@
                         </div>
                         <div class="mdl-card__supporting-text">
                             <div class="nn-manager__container">
-                            	<div id="dump-print"></div>
+                            	<textarea id="dump-print" class="mdl-textfield__input" type="text" rows="10" spellcheck="false"  style="z-index: auto; position: relative; line-height: normal; font-size: 16px; transition: none 0s ease 0s; color: black;background: white !important;">
+No exported neural network data to display. 
+1) Collect 'true' and 'false' data 
+2) Press the "Train Neural Network" button
+3) Press the "Export Neural Network" button
+The export data will provide an array or neural network weight values and an activation function. Although the export syntax is JavaScript, it consists of nothing more than simple floating point calculations and can easily be used in any programming language including Arduino (simplified C for microcontrollers).
+                            		</textarea>
                             </div>
                         </div>
                     </div>
@@ -403,74 +574,7 @@
               
                 <!-- Table-->
                 <div class="mdl-cell mdl-cell--12-col-desktop mdl-cell--12-col-tablet mdl-cell--4-col-phone ">
-                    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp projects-table">
-                        <thead>
-                        <tr>
-                            <th class="mdl-data-table__cell--non-numeric">Project</th>
-                            <th class="mdl-data-table__cell--non-numeric">Responsible</th>
-                            <th class="mdl-data-table__cell--non-numeric">Client contact</th>
-                            <th class="mdl-data-table__cell--non-numeric">Deadline</th>
-                            <th class="mdl-data-table__cell--non-numeric">Progress</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td class="mdl-data-table__cell--non-numeric">Darkboard</td>
-                            <td class="mdl-data-table__cell--non-numeric">
-                                <span class="label label--mini background-color--mint">Alex</span>
-                                <span class="label label--mini background-color--primary">Dina</span>
-                                <span class="label label--mini background-color--cerulean">Misha</span>
-                            </td>
-                            <td class="mdl-data-table__cell--non-numeric">Luke@skywalker.com</td>
-                            <td class="mdl-data-table__cell--non-numeric">Jun 15</td>
-                            <td class="mdl-data-table__cell--non-numeric">
-                                <div id="task1" class="mdl-progress mdl-js-progress"></div>
-                                <div class="mdl-tooltip" for="task1">
-                                    44%
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="mdl-data-table__cell--non-numeric">Big financial app</td>
-                            <td class="mdl-data-table__cell--non-numeric">
-                                <span class="label label--mini background-color--baby-blue">Vlada</span>
-                            </td>
-                            <td class="mdl-data-table__cell--non-numeric">Boss@financial.com</td>
-                            <td class="mdl-data-table__cell--non-numeric">Mar 1</td>
-                            <td class="mdl-data-table__cell--non-numeric">
-                                <div id="task2" class="mdl-progress mdl-js-progress"></div>
-                                <div class="mdl-tooltip" for="task2">
-                                    14%
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="is-selected">
-                            <td class="mdl-data-table__cell--non-numeric">New Year office decoration</td>
-                            <td class="mdl-data-table__cell--non-numeric">
-                                <span class="label label--mini background-color--primary">Dina</span>
-                                <span class="label label--mini background-color--baby-blue">Vlada</span>
-                            </td>
-                            <td class="mdl-data-table__cell--non-numeric">info@creativeit.io</td>
-                            <td class="mdl-data-table__cell--non-numeric">Dec 25</td>
-                            <td class="mdl-data-table__cell--non-numeric task-done">
-                                <i id="task3" class="material-icons">done</i>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="mdl-data-table__cell--non-numeric">Don't worry, be happy!!!</td>
-                            <td class="mdl-data-table__cell--non-numeric">
-                                <span class="label label--mini background-color--secondary">Everybody</span>
-                            </td>
-                            <td class="mdl-data-table__cell--non-numeric">Contact@happyness.com</td>
-                            <td class="mdl-data-table__cell--non-numeric">Yesterday</td>
-                            <td class="mdl-data-table__cell--non-numeric">
-                                <div id="task4" class="mdl-progress mdl-js-progress"></div>
-                                <div class="mdl-tooltip" for="task4">
-                                    31%
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
+                  
                     </table>
                 </div>
             </div>
@@ -573,7 +677,6 @@
             var l=n.textContent.trim();
             t.value=l,e.classList.contains("mdl-textfield--floating-label")||""!=i||(i=e.querySelector(".mdl-textfield__label").textContent.trim(),e.querySelector(".mdl-textfield__label").textContent="")},n.onclick=function(){d(n)},n.dataset.selected&&d(n)})},init:function(e){var t=document.querySelectorAll(e);[].forEach.call(t,function(e){getmdlSelect._addEventListeners(e),componentHandler.upgradeElement(e),componentHandler.upgradeElement(e.querySelector("ul"))})}};
 //# sourceMappingURL=getmdl-select.min.js.map
-
 
 </script>
 

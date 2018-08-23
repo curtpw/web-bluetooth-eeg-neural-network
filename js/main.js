@@ -763,4 +763,65 @@ const lstmOptions = {
         $("#dump-print").addClass("active-print");
     });
 
+     /*******************************************************************************************************************
+     *********************************************** SLIDER UI ******************************************************
+     ********************************************************************************************************************/
+    var rangeSlider = function(){
+        var slider = $('.range-slider'),
+            range = $('.range-slider__range'),
+            value = $('.range-slider__value');
+          
+        slider.each(function(){
+
+        value.each(function(){
+            var value = $(this).prev().attr('value');
+            $(this).html(value);
+        });
+
+        if( $(this).hasClass('nn-architecture') ){ $('.range-slider__value.nn-architecture').html('4:4:4:1'); }
+
+        range.on('input', function(){
+            var labels = ['2:1', '3:4:4:1', '4:1', '4:4:1', '4:3:3:1', '4:4:4:1'];
+            $(this).next(value).html(this.value);
+
+            if( $(this).hasClass('nn-architecture') ){ $(this).next(value).html( labels[this.value] ); }
+          
+          });
+        });
+    }
+
+    rangeSlider();
+
+    //RANGE SLIDER EVENT HANDLER
+    $( ".range-slider" ).each(function() {
+
+        if($(this).hasClass("nn-architecture")){
+            // Add labels to slider whose values 
+            // are specified by min, max and whose
+            // step is set to 1
+            
+            // Get the options for this slider
+            //var opt = $(this).data().uiSlider.options;
+            // Get the number of possible values
+            var $input = $(this).find("input");
+            var min = parseInt($input.attr("min"));
+            var max = parseInt($input.attr("max"));
+            var step = parseInt($input.attr("step"));
+            var increment = parseInt($input.attr("increment"));
+            var vals = max - min; //opt.max - opt.min;
+            //if(min < 0){ vals = max + min; }
+            var labels = ['2:1', '3:4:4:1', '4:1', '4:3:1', '4:3:3:1', '4:4:4:1'];
+            
+            // Space out values
+            for (var i = 0; (i * increment) <= vals; i++) {
+                var s = min + (i * increment);
+                var el = $('<label>'+ labels[s] +'</label>').css('left',( 4 + Math.abs((s-min)/vals) *($input.width() -24)+'px'));
+                //   var el = $('<label>'+ s +'</label>').css('left',( 3 + ((s-min)/vals) *($input.width() -24)+'px'));
+                if(s == 0){ el = $('<label>'+ labels[s] +'</label>').css('left',( 21 + Math.abs((s-min)/vals) *($input.width() -24)+'px')); }
+                if(s == vals){ el = $('<label>'+ labels[s] +'</label>').css('left',( -20 + Math.abs((s-min)/vals) *($input.width() -24)+'px')); }
+                $(this).append(el);
+            }
+        }  
+    });
+
 }); // end on document load
