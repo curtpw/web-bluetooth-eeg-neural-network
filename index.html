@@ -283,15 +283,18 @@
 		.drawer-text-info{ width: calc(100% - 32px); }
     </style>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <!-- library for realtime streaming data visualization -->
-    <script type="text/javascript" src="js/smoothie.js"></script>
+    <script type="text/javascript" src="js/smoothie.js"></script> 
 
     <!-- library for neural network -->
     <script type="text/javascript" src="js/synaptic.js"></script>
 
-            <!-- Web Bluetooth connection -->
+    <!-- recorded EEG data from EEG glasses -->
+    <script type="text/javascript" src="js/test_eeg_data.js"></script>
+
+    <!-- Web Bluetooth connection -->
     <script>
         var button = document.getElementById("connect");
         var message = document.getElementById("message");
@@ -319,12 +322,12 @@
                 CONNECT
             </button>
 
-			<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-yellow" style="margin-left: 10px;">
+			<button id="true-test-data" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-yellow" style="margin-left: 10px;">
                 <i class="material-icons">trending_up</i>
                 Concentration Test Data
             </button>
 
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-yellow" style="margin-left: 10px;">
+            <button id="false-test-data" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored-yellow" style="margin-left: 10px;">
                 <i class="material-icons">trending_down</i>
                 Relaxation Test Data
             </button>
@@ -695,6 +698,7 @@ The export data will provide an array or neural network weight values and an act
 <!-- endinject -->
 <script src="js/material.min.js"></script>
  <script>
+
     //http://creativeit.github.io/getmdl-select/
     !function(){"use strict";function e(){c.classList.remove("disabled"),n.classList.remove("disabled"),l.scrollLeft<=0&&c.classList.add("disabled"),l.scrollLeft+l.clientWidth+5>=l.scrollWidth&&n.classList.add("disabled")}function t(e){l.scrollLeft+=e}var n=document.querySelector(".scrollindicator.scrollindicator--right"),c=document.querySelector(".scrollindicator.scrollindicator--left"),l=document.querySelector(".docs-navigation"),i=40; /*l.addEventListener("scroll",e),e(),n.addEventListener("click",t.bind(null,i)),n.addEventListener("tap",t.bind(null,i)),c.addEventListener("click",t.bind(null,-i)),c.addEventListener("tap",t.bind(null,-i))}(),function(){"use strict";var e=document.querySelector(".download-button-container");e&&e.addEventListener("click",function(){ga("send",{hitType:"event",eventCategory:"click",eventAction:"mdl-download"})})}(),function(){"use strict";*/var e=document.querySelectorAll('[href=""]');Array.prototype.forEach.call(e,function(e){e.addEventListener("click",function(e){e.preventDefault()})})}();
 

@@ -1,10 +1,7 @@
-/*
-​x=r sin(φ)cos(θ)
-​y=r sin(φ)sin(θ)
-​z=r cos(φ)
-*/
 
-
+/*******************************************************************************************************************
+ *********************************************** WEB BLUETOOTH *****************************************************
+ *******************************************************************************************************************/
 
 //sensor data object
 var state = {};
@@ -736,6 +733,10 @@ const lstmOptions = {
 
 
     $('#clear').click(function() {
+        clearData();
+    });
+
+    function clearData(){
         NNTrueDataArray = new Array;
         NNFalseDataArray = new Array;
         sensorDataArray = new Array(18).fill(0);
@@ -744,7 +745,7 @@ const lstmOptions = {
         $('.message-nn-false').html('');
         $("#dump-print").html("");
         console.log("Clear NN Data");
-    });
+    }
 
 
     $('#export-btn').click(function() {
@@ -762,6 +763,99 @@ const lstmOptions = {
         $("#dump-print").html(standalone);
         $("#dump-print").addClass("active-print");
     });
+
+    $('#true-test-data').click(function() {
+        console.log("true test data button");
+        $('#true-test-data').addClass('active-data');
+        $('#connect','#false-test-data').removeClass('active-data');
+
+        //load and run test data
+        runData();
+    });
+
+    $('#false-test-data').click(function() {
+        console.log("false test data button");
+        $('#false-test-data').addClass('active-data');
+        $('#connect','#true-test-data').removeClass('active-data');
+
+        //load and run test data
+        runData();
+    });
+
+    function runData(){
+
+        let runTimeData;
+        let currentDataType;
+        let runIndex = 0;
+        let testDataLength = 0;
+
+        var runDataHandle = setInterval(function() {
+
+            //are we using test data, and if so what data
+            if ( $('#true-test-data').hasClass('active-data') ){
+                runTimeData = eegTestData;
+                testDataLength = eegTestData.length;
+                currentDataType = 'test-true';
+            }else if( $('#false-test-data').hasClass('active-data') ){
+                runTimeData = eegTestData;
+                testDataLength = eegTestData.length;
+                currentDataType = 'test-false';
+            } else{
+                clearInterval(runDataHandle);
+                return;
+            }
+
+            timeStamp = new Date().getTime();
+
+            if(runIndex >= testDataLength){ runIndex = 0; } else { runIndex++; }
+
+            //load data into global array
+            sensorDataArray = new Array(6).fill(0);
+
+            sensorDataArray[0] = runTimeData[runIndex][0].toFixed(3);
+            sensorDataArray[1] = runTimeData[runIndex][1].toFixed(3);
+            sensorDataArray[2] = runTimeData[runIndex][2].toFixed(3);
+            sensorDataArray[3] = runTimeData[runIndex][3].toFixed(3);
+            sensorDataArray[4] = runTimeData[runIndex][4].toFixed(3);
+            sensorDataArray[5] = 0;       
+            sensorDataArray[6] = timeStamp;
+          
+            //update time series chart with normalized values
+            var rawDeltaChart = sensorDataArray[0];
+            var rawThetaChart = sensorDataArray[1];
+            var rawAlphaChart = sensorDataArray[2];
+            var rawBetaChart  = sensorDataArray[3];
+            var rawEMGChart  =  sensorDataArray[4];
+
+            //sensor values in bottom 2/3 of chart , 1/10 height each
+            rawDeltaChart = (rawDeltaChart / 0.5) + 2 * 0.1;
+            rawThetaChart = (rawThetaChart / 0.5) + 1 * 0.1;
+            rawAlphaChart = (rawAlphaChart / 0.5) + 0 * 0.1;
+            rawBetaChart  = (rawBetaChart  / 4) + 6 * 0.1;
+            rawEMGChart  = (rawEMGChart  / 3) + 4 * 0.1;
+
+            lineDelta.append(timeStamp, rawDeltaChart);
+            lineTheta.append(timeStamp, rawThetaChart);
+            lineAlpha.append(timeStamp, rawAlphaChart);
+            lineBeta.append(timeStamp, rawBetaChart);
+            lineEMG.append(timeStamp, rawEMGChart);
+
+            //if data sample collection has been flagged
+            if (getSamplesFlag > 0) {
+                collectData();
+            } else if (trainNNFlag) {
+                //don't do anything
+            } else {
+                if (haveNNFlag && activeNNFlag) { //we have a NN and we want to apply to current sensor data
+                    getNNScore();
+                } 
+            }
+
+            displayData();
+            bluetoothDataFlag = false;
+
+        }, 200); // throttle 200 = 5Hz limit
+    }
 
      /*******************************************************************************************************************
      *********************************************** SLIDER UI ******************************************************
@@ -822,6 +916,15 @@ const lstmOptions = {
                 $(this).append(el);
             }
         }  
+    });
+
+    //TEST DATA AUTOMATICALLY LOADS WHEN SITE LOADS
+    $(document).ready(function() {
+        $('#true-test-data').addClass('active-data');
+        $('#connect','#false-test-data').removeClass('active-data');
+
+        //load and run test data
+        runData();
     });
 
 }); // end on document load
