@@ -481,11 +481,31 @@ $(document).ready(function() {
         var betaElement = 	  document.getElementsByClassName('beta-data')[0];
         var emgElement =     document.getElementsByClassName('emg-data')[0];
 
-        deltaElement.innerHTML =      	((sensorDataArray[0] * 160000) - 80000).toFixed(2);
+        if( $('#code-node1').val() == "DV" || $('#code-node1').val() == "TV" || $('#code-node1').val() == "AV" || $('#code-node1').val() == "BV" || $('#code-node1').val() == "EV"){
+            deltaElement.innerHTML = (sensorDataArray[0] * 100).toFixed(2) + ' %';
+        } else { deltaElement.innerHTML = ((sensorDataArray[0] * 160000) - 80000).toFixed(2); }
+
+        if( $('#code-node2').val() == "DV" || $('#code-node2').val() == "TV" || $('#code-node2').val() == "AV" || $('#code-node2').val() == "BV" || $('#code-node2').val() == "EV"){
+            thetaElement.innerHTML = (sensorDataArray[1] * 100).toFixed(2) + ' %';
+        } else { thetaElement.innerHTML = ((sensorDataArray[1] * 160000) - 80000).toFixed(2); }
+
+        if( $('#code-node3').val() == "DV" || $('#code-node3').val() == "TV" || $('#code-node3').val() == "AV" || $('#code-node3').val() == "BV" || $('#code-node3').val() == "EV"){
+            alphaElement.innerHTML = (sensorDataArray[2] * 100).toFixed(2) + ' %';
+        } else { alphaElement.innerHTML = ((sensorDataArray[2] * 160000) - 80000).toFixed(2); }
+
+        if( $('#code-node4').val() == "DV" || $('#code-node4').val() == "TV" || $('#code-node4').val() == "AV" || $('#code-node4').val() == "BV" || $('#code-node4').val() == "EV"){
+            betaElement.innerHTML = (sensorDataArray[3] * 100).toFixed(2) + ' %';
+        } else { betaElement.innerHTML = ((sensorDataArray[3] * 160000) - 80000).toFixed(2); }
+
+        if( $('#code-node5').val() == "DV" || $('#code-node5').val() == "TV" || $('#code-node5').val() == "AV" || $('#code-node5').val() == "BV" || $('#code-node5').val() == "EV"){
+            emgElement.innerHTML = (sensorDataArray[4] * 100).toFixed(2) + ' %';
+        } else { emgElement.innerHTML = ((sensorDataArray[4] * 160000) - 80000).toFixed(2); }
+
+      /*  deltaElement.innerHTML =      	((sensorDataArray[0] * 160000) - 80000).toFixed(2);
         thetaElement.innerHTML =      	((sensorDataArray[1] * 160000) - 80000).toFixed(2);
         alphaElement.innerHTML =      	((sensorDataArray[2] * 160000) - 80000).toFixed(2);
         betaElement.innerHTML =  		((sensorDataArray[3] * 160000) - 80000).toFixed(2);
-        emgElement.innerHTML =          ((sensorDataArray[4] * 160000) - 80000).toFixed(2); 
+        emgElement.innerHTML =          ((sensorDataArray[4] * 160000) - 80000).toFixed(2); */
     }
 
     function collectData() {
@@ -830,14 +850,21 @@ const lstmOptions = {
             for(let i = 0; i < 9; i++){
                 sensorDataHistory[i] = sensorDataHistory[i + 1];
             }
-            sensorDataHistory[9] = sensorDataArray;
+          //  sensorDataHistory[9] = sensorDataArray;
+            sensorDataHistory[9] = [runTimeData[runIndex][0].toFixed(3), runTimeData[runIndex][1].toFixed(3), runTimeData[runIndex][2].toFixed(3), runTimeData[runIndex][3].toFixed(3), runTimeData[runIndex][4].toFixed(3)];
           //  console.log("data history: " + sensorDataHistory);
 
             //calculate averages
             let sensorDataAverages = new Array(6).fill(0);
-            for(let j = 0; j < 9; j++){
+            for(let j = 0; j < 10; j++){
                 for(let k = 0; k < 5; k++){
-                    sensorDataAverages[k] = sensorDataAverages[k] + Number(sensorDataHistory[j][k]);
+
+                    //use raw test data if possible
+                    if(runIndex > 10){
+                        sensorDataAverages[k] = sensorDataAverages[k] + Number( runTimeData[runIndex - j][k] ); // Number(sensorDataHistory[j][k]);
+                    } else {
+                        sensorDataAverages[k] = sensorDataAverages[k] + Number(sensorDataHistory[j][k]);
+                    }
                    // console.log("data average total: " + sensorDataAverages[k] + "sensor data history item: " + sensorDataHistory[j][k]);
                 }
             }
@@ -847,17 +874,23 @@ const lstmOptions = {
 
             //now that we have averages we can calculate variance from average
             let sensorDataVariance = new Array(6).fill(0);
-            for(let j = 0; j < 9; j++){
+            for(let j = 0; j < 10; j++){
                 for(let k = 0; k < 5; k++){
-                    sensorDataVariance[k] = sensorDataVariance[k] + Math.abs(sensorDataAverages[k] - sensorDataHistory[j][k]);
+
+                    //use raw test data if possible
+                    if(runIndex > 10){
+                        sensorDataVariance[k] = sensorDataVariance[k] + Math.abs(sensorDataAverages[k] - Number(runTimeData[runIndex - j][k]) );
+                    } else {
+                        sensorDataVariance[k] = sensorDataVariance[k] + Math.abs(sensorDataAverages[k] - Number(sensorDataHistory[j][k]) );
+                    }
                 }
             }
             for(let m = 0; m < 5; m++){
-                sensorDataVariance[m] = sensorDataVariance[m] / 10;
+                sensorDataVariance[m] = (sensorDataVariance[m] / 10) / sensorDataAverages[m];
             }
           
             //node data selection
-            let nodeCodes = new Array(6).fill(0);
+            let nodeCodes = new Array(5).fill(0);
             nodeCodes[0] = $('#code-node1').val();
             nodeCodes[1] = $('#code-node2').val();
             nodeCodes[2] = $('#code-node3').val();
@@ -866,35 +899,51 @@ const lstmOptions = {
 
           //  console.log("nodeCodes: " + nodeCodes[0] + " " + nodeCodes[1] + " " + nodeCodes[2] + " " + nodeCodes[3] + " " + nodeCodes[4]);
 
+            let nodeDataTypes = new Array(5).fill(0);
+
             let nodeTempData = sensorDataArray; //for switching raw vals between nodes so we don't overwrite primary array
             for(let h = 0; h < 5; h++){
                 //delta wave vals
-                if(nodeCodes[h] == "DR"){ sensorDataArray[h] = nodeTempData[0]; }
-                else if(nodeCodes[h] == "DA"){ sensorDataArray[h] = sensorDataAverages[0]; }
-                else if(nodeCodes[h] == "DV"){ sensorDataArray[h] = sensorDataVariance[0]; }
+                if(nodeCodes[h] == "DR"){      sensorDataArray[h] = nodeTempData[0];        nodeDataTypes[h] = "R"; }
+                else if(nodeCodes[h] == "DA"){ sensorDataArray[h] = sensorDataAverages[0];  nodeDataTypes[h] = "A"; }
+                else if(nodeCodes[h] == "DV"){ sensorDataArray[h] = sensorDataVariance[0];  nodeDataTypes[h] = "V"; }
                 //theta wave vals
-                else if(nodeCodes[h] == "TR"){ sensorDataArray[h] = nodeTempData[1]; }
-                else if(nodeCodes[h] == "TA"){ sensorDataArray[h] = sensorDataAverages[1]; }
-                else if(nodeCodes[h] == "TV"){ sensorDataArray[h] = sensorDataVariance[1]; }
+                else if(nodeCodes[h] == "TR"){ sensorDataArray[h] = nodeTempData[1];        nodeDataTypes[h] = "R"; }
+                else if(nodeCodes[h] == "TA"){ sensorDataArray[h] = sensorDataAverages[1];  nodeDataTypes[h] = "A"; }
+                else if(nodeCodes[h] == "TV"){ sensorDataArray[h] = sensorDataVariance[1];  nodeDataTypes[h] = "V"; }
                 //alpha wave vals
-                else if(nodeCodes[h] == "AR"){ sensorDataArray[h] = nodeTempData[2]; }
-                else if(nodeCodes[h] == "AA"){ sensorDataArray[h] = sensorDataAverages[2]; }
-                else if(nodeCodes[h] == "AV"){ sensorDataArray[h] = sensorDataVariance[2]; }
+                else if(nodeCodes[h] == "AR"){ sensorDataArray[h] = nodeTempData[2];        nodeDataTypes[h] = "R"; }
+                else if(nodeCodes[h] == "AA"){ sensorDataArray[h] = sensorDataAverages[2];  nodeDataTypes[h] = "A"; }
+                else if(nodeCodes[h] == "AV"){ sensorDataArray[h] = sensorDataVariance[2];  nodeDataTypes[h] = "V"; }
                 //beta wave vals
-                else if(nodeCodes[h] == "BR"){ sensorDataArray[h] = nodeTempData[3]; }
-                else if(nodeCodes[h] == "BA"){ sensorDataArray[h] = sensorDataAverages[3]; }
-                else if(nodeCodes[h] == "BV"){ sensorDataArray[h] = sensorDataVariance[3]; }
+                else if(nodeCodes[h] == "BR"){ sensorDataArray[h] = nodeTempData[3];        nodeDataTypes[h] = "R"; }
+                else if(nodeCodes[h] == "BA"){ sensorDataArray[h] = sensorDataAverages[3];  nodeDataTypes[h] = "A"; }
+                else if(nodeCodes[h] == "BV"){ sensorDataArray[h] = sensorDataVariance[3];  nodeDataTypes[h] = "V"; }
                 //emg wave vals
-                else if(nodeCodes[h] == "ER"){ sensorDataArray[h] = nodeTempData[4]; }
-                else if(nodeCodes[h] == "EA"){ sensorDataArray[h] = sensorDataAverages[4]; }
-                else if(nodeCodes[h] == "EV"){ sensorDataArray[h] = sensorDataVariance[4]; }
+                else if(nodeCodes[h] == "ER"){ sensorDataArray[h] = nodeTempData[4];        nodeDataTypes[h] = "R"; }
+                else if(nodeCodes[h] == "EA"){ sensorDataArray[h] = sensorDataAverages[4];  nodeDataTypes[h] = "A"; }
+                else if(nodeCodes[h] == "EV"){ sensorDataArray[h] = sensorDataVariance[4];  nodeDataTypes[h] = "V"; }
                 else{ sensorDataArray[h] = 0; }
             } 
+
 
             console.log("Loaded Data: " + sensorDataArray[0] + " " + sensorDataArray[1] + " " + sensorDataArray[2] + " " + sensorDataArray[3] + " " + sensorDataArray[4] );
 
             //update time series chart with normalized values
-            var rawDeltaChart = sensorDataArray[0];
+            let rawChartData = new Array(5).fill(0);
+
+            //modify graph appearence based on data type
+             for(let q = 0; q < 5; q++){
+                if(nodeDataTypes[q] == 'R'){
+                    rawChartData[q] = (sensorDataArray[q] / 4) + (q) * 0.1;
+                } else if( nodeDataTypes[q] == 'A'){
+                    rawChartData[q] = (sensorDataArray[q] / 3) + (q) * 0.1;
+                } else if (nodeDataTypes[q] == 'V'){
+                    rawChartData[q] = (sensorDataArray[q] / 1) + (q) * 0.1;
+                }
+            }           
+
+       /*     var rawDeltaChart = sensorDataArray[0];
             var rawThetaChart = sensorDataArray[1];
             var rawAlphaChart = sensorDataArray[2];
             var rawBetaChart  = sensorDataArray[3];
@@ -905,13 +954,13 @@ const lstmOptions = {
             rawThetaChart = (rawThetaChart / 4) + 3 * 0.1;
             rawAlphaChart = (rawAlphaChart / 4) + 2 * 0.1;
             rawBetaChart  = (rawBetaChart  / 4) + 1 * 0.1;
-            rawEMGChart  = (rawEMGChart  / 4) + 0 * 0.1;
+            rawEMGChart  = (rawEMGChart  / 4) + 0 * 0.1; */
 
-            if(rawDeltaChart != 0) lineDelta.append(timeStamp, rawDeltaChart);
-            if(rawThetaChart != 0) lineTheta.append(timeStamp, rawThetaChart);
-            if(rawAlphaChart != 0) lineAlpha.append(timeStamp, rawAlphaChart);
-            if(rawBetaChart != 0) lineBeta.append(timeStamp, rawBetaChart);
-            if(rawEMGChart != 0) lineEMG.append(timeStamp, rawEMGChart);
+            if(rawChartData[0] != 0) lineDelta.append(timeStamp, rawChartData[0]);
+            if(rawChartData[1] != 0) lineTheta.append(timeStamp, rawChartData[1]);
+            if(rawChartData[2] != 0) lineAlpha.append(timeStamp, rawChartData[2]);
+            if(rawChartData[3] != 0) lineBeta.append(timeStamp, rawChartData[3]);
+            if(rawChartData[4] != 0) lineEMG.append(timeStamp, rawChartData[4]);
 
             //if data sample collection has been flagged
             if (getSamplesFlag > 0) {
