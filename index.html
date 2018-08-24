@@ -283,7 +283,11 @@
 		.drawer-text-info{ width: calc(100% - 32px); }
     </style>
 
+    <!-- Good Ol' JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Material Design Lite UI Kit -->
+    <script src="js/material.min.js"></script>
 
     <!-- library for realtime streaming data visualization -->
     <script type="text/javascript" src="js/smoothie.js"></script> 
@@ -311,7 +315,6 @@
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header is-small-screen">
     <header class="mdl-layout__header">
         <div class="mdl-layout__header-row">
-
 
 	        <span class="mdl-layout-title">
 	            EEG Glasses Manager
@@ -341,27 +344,25 @@
 
     <div class="mdl-layout__drawer">
         <header>INFO</header>
+        <div class="mdl-cell drawer-text-info">
+	        <p>This website is a companion to my <a href="https://hackaday.io/project/160618-35-nrf52-ecg-bracelet-hacked-into-eeg-glasses" target="_blank">EEG Glasses project</a>. The EEG Glasses connect and stream data to the website over <a href="https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web">Web Bluetooth</a>. YOU DON'T NEED A DEVICE TO USE THIS WEBSITE! I recorded data from my EEG Glasses. Just press one of the "Test Data" buttons and recorded EEG data will instantly appear.</p>
 
-        <nav class="mdl-navigation drawer-navigation">
-            <a class="mdl-navigation__link" href="https://hackaday.io/project/160618-35-nrf52-ecg-bracelet-hacked-into-eeg-glasses">
+	        <p>EEG is awesome but <b>the best thing about this website is <a href="https://github.com/cazala/synaptic" target="_blank">SynapticJS</a> neural network training and export. You can train neural networks on this site with recorded EEG data and run them on an Arduino or Arduino compatable microcontroller (and pretty much anything else)</b>. More importantly, this site is available on GitHub as both a repository and GitHub page. You can modify it and use it as a tool to create neural networks for other projects.</p>
+
+	        <p>The magic of SynapticJS is the <a href="https://github.com/cazala/synaptic/wiki/Networks" target="_blank">standalone export</a>. This is the only framework that allows you to <b>export both weights and activation function for a neural network as code snippet that will run on anything</b>. The export is just a bunch of floating point calculations so it can be cut and pasted into pretty much any programming language.</p>  
+	    </div>
+
+	    <nav class="mdl-navigation drawer-navigation">
+            <a class="mdl-navigation__link" href="https://hackaday.io/project/160618-35-nrf52-ecg-bracelet-hacked-into-eeg-glasses" target="_blank">
                 <i class="material-icons">link</i>
                 EEG Glasses Hackaday Project Page
             </a>
-
             
-            <a class="mdl-navigation__link" href="https://hackaday.io/curtwhite">
+            <a class="mdl-navigation__link" href="https://hackaday.io/curtwhite" target="_blank">
                 <i class="material-icons">link</i>
                 Other Hackaday Projects
             </a>
         </nav>
-        <div class="mdl-layout-spacer"></div>
-        <div class="mdl-cell drawer-text-info">
-	        <p>This website is a companion to my <a href="https://hackaday.io/project/160618-35-nrf52-ecg-bracelet-hacked-into-eeg-glasses">EEG Glasses project</a>. The EEG Glasses connect and stream data to the website over <a href="https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web">Web Bluetooth</a>. YOU DON'T NEED A DEVICE TO USE THIS WEBSITE! I recorded data from my EEG Glasses. Just press one of the "Test Data" buttons and recorded EEG data will instantly appear.</p>
-
-	        <p>EEG is awesome but <b>the best thing about this website is <a href="https://github.com/cazala/synaptic">SynapticJS</a> neural network training and export. You can train neural networks on this site with recorded EEG data and run them on an Arduino or Arduino compatable microcontroller (and pretty much anything else)</b>. More importantly, this site is available on GitHub as both a repository and GitHub page. You can modify it and use it as a tool to create neural networks for other projects.</p>
-
-	        <p>The magic of SynapticJS is the <a href="https://github.com/cazala/synaptic/wiki/Networks">standalone export</a>. This is the only framework that allows you to <b>export both weights and activation function for a neural network as code snippet that will run on anything</b>. The export is just a bunch of floating point calculations so it can be cut and pasted into pretty much any programming language.</p>  
-	    </div>
         
     </div>
 
@@ -383,7 +384,7 @@
                                 <!-- Data Selection Node 1-->
 							    <div class="data-select-dropdown mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
 							        <input type="text" value="" class="mdl-textfield__input" id="node1" readonly>
-							        <input type="hidden" value="" name="node1">
+							        <input type="hidden" value="" name="node1" id="code-node1">
 							        <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
 							        <label for="node1" class="mdl-textfield__label node1-label">Node 1:&nbsp;<span class="delta-data"></span></label>
 							        <ul for="node1" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
@@ -409,7 +410,7 @@
 							    <!-- Data Selection Node 2-->
 							    <div class="data-select-dropdown mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
 							        <input type="text" value="" class="mdl-textfield__input" id="node2" readonly>
-							        <input type="hidden" value="" name="node1">
+							        <input type="hidden" value="" name="node2" id="code-node2">
 							        <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
 							        <label for="node2" class="mdl-textfield__label node2-label">Node 2:&nbsp;<span class="theta-data"></span></label>
 							        <ul for="node2" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
@@ -435,7 +436,7 @@
 							    <!-- Data Selection Node 3-->
 							    <div class="data-select-dropdown mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
 							        <input type="text" value="" class="mdl-textfield__input" id="node3" readonly>
-							        <input type="hidden" value="" name="node3">
+							        <input type="hidden" value="" name="node3" id="code-node3">
 							        <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
 							        <label for="node3" class="mdl-textfield__label node3-label">Node 3:&nbsp;<span class="alpha-data"></span></label>
 							        <ul for="node3" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
@@ -461,7 +462,7 @@
 							    <!-- Data Selection Node 4-->
 							    <div class="data-select-dropdown mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
 							        <input type="text" value="" class="mdl-textfield__input" id="node4" readonly>
-							        <input type="hidden" value="" name="node4">
+							        <input type="hidden" value="" name="node4" id="code-node4">
 							        <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
 							        <label for="node4" class="mdl-textfield__label node4-label">Node 4:&nbsp;<span class="beta-data"></span></label>
 							        <ul for="node4" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
@@ -487,7 +488,7 @@
 							    <!-- Data Selection Node 5-->
 							    <div class="data-select-dropdown mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fix-height">
 							        <input type="text" value="" class="mdl-textfield__input" id="node5" readonly>
-							        <input type="hidden" value="" name="node5">
+							        <input type="hidden" value="" name="node5" id="code-node5">
 							        <i class="mdl-icon-toggle__label material-icons">keyboard_arrow_down</i>
 							        <label for="node5" class="mdl-textfield__label node5-label">Node 5:&nbsp;<span class="emg-data"></span></label>
 							        <ul for="node5" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
@@ -583,7 +584,7 @@
                     <div class="mdl-card mdl-shadow--2dp pie-chart exports-card">
                         <div class="mdl-card__title">
                         	<i class="material-icons">code</i>
-                            <h2 class="mdl-card__title-text">Exports</h2>
+                            <a href="https://github.com/cazala/synaptic/wiki/Networks" target="_blank"><h2 class="mdl-card__title-text">Export Standalone Neural Network Function</h2></a>
                         </div>
                         <div class="mdl-card__supporting-text">
                             <div class="nn-manager__container">
@@ -684,19 +685,6 @@ The export data will provide an array or neural network weight values and an act
     </main>
 </div>
 
-<!-- inject:js -->
-<!-- <script src="js/d3.js"></script> -->
-<!--<script src="js/getmdl-select.min.js"></script>-->
-<!-- <script src="js/material.js"></script> -->
-<!-- <script src="js/nv.d3.js"></script>
-<script src="js/widgets/employer-form/employer-form.js"></script>
-<script src="js/widgets/line-chart/line-chart-nvd3.js"></script>
-<script src="js/widgets/map/maps.js"></script>
-<script src="js/widgets/pie-chart/pie-chart-nvd3.js"></script>
-<script src="js/widgets/table/table.js"></script>
-<script src="js/widgets/todo/todo.js"></script> -->
-<!-- endinject -->
-<script src="js/material.min.js"></script>
  <script>
 
     //http://creativeit.github.io/getmdl-select/
