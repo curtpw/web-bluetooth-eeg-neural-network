@@ -212,12 +212,12 @@ class ControllerWebBluetooth {
 	        let EMGWave2 = (event.target.value.getUint8(18) / 100) + (event.target.value.getUint8(19) / 10000);
 	//    }
 
-    	console.log("first BLE packet vals: " + event.target.value.getUint8(0) + " " + event.target.value.getUint8(1) + " " + event.target.value.getUint8(2));
-    	console.log("Combined delta BLE vals: " + ((event.target.value.getUint8(0) / 10) + (event.target.value.getUint8(1) / 1000) ) );
-    	console.log("raw eeg (d1,t1,a1,b1,emg1,d2,t2,a2,b2,emg2): " + deltaWave1 + " " + thetaWave1 + " " + alphaWave1 + " " + betaWave1 + " " + EMGWave1 +  " " + deltaWave2 + " " + thetaWave2 + " " + alphaWave2 + " " + betaWave2 + " " + EMGWave2);
+   // 	console.log("first BLE packet vals: " + event.target.value.getUint8(0) + " " + event.target.value.getUint8(1) + " " + event.target.value.getUint8(2));
+   // 	console.log("Combined delta BLE vals: " + ((event.target.value.getUint8(0) / 10) + (event.target.value.getUint8(1) / 1000) ) );
+    //	console.log("raw eeg (d1,t1,a1,b1,emg1,d2,t2,a2,b2,emg2): " + deltaWave1 + " " + thetaWave1 + " " + alphaWave1 + " " + betaWave1 + " " + EMGWave1 +  " " + deltaWave2 + " " + thetaWave2 + " " + alphaWave2 + " " + betaWave2 + " " + EMGWave2);
 
         //for recording
-     //   console.log("[" + deltaWave1 + ", " + thetaWave1 + ", " + alphaWave1 + ", " + betaWave1 + ", " + EMGWave1 +  "],[" + deltaWave2 + ", " + thetaWave2 + ", " + alphaWave2 + ", " + betaWave2 + ", " + EMGWave2 + "],");
+        console.log("[" + deltaWave1 + ", " + thetaWave1 + ", " + alphaWave1 + ", " + betaWave1 + ", " + EMGWave1 +  "],[" + deltaWave2 + ", " + thetaWave2 + ", " + alphaWave2 + ", " + betaWave2 + ", " + EMGWave2 + "],");
 
         state = {
             delta: deltaWave,
@@ -291,7 +291,7 @@ var NNTrueDataArray = new Array;
 var NNFalseDataArray = new Array;
 
 var NNArchitecture = 'none';
-var numInputs = 4;
+var numInputs = 5;
 
 var getSamplesFlag = 0;
 var getSamplesTypeFlag = 0; //0=none 1=NN1T 2=NN1F 3=NN2T 4=NN2F
@@ -394,11 +394,11 @@ $(document).ready(function() {
                 rawBetaChart  = (rawBetaChart  / 4) + 6 * 0.1;
                 rawEMGChart  = (rawEMGChart  / 3) + 4 * 0.1;
 
-                lineDelta.append(timeStamp, rawDeltaChart);
-                lineTheta.append(timeStamp, rawThetaChart);
-                lineAlpha.append(timeStamp, rawAlphaChart);
-                lineBeta.append(timeStamp, rawBetaChart);
-                lineEMG.append(timeStamp, rawEMGChart);
+                lineNode1.append(timeStamp, rawDeltaChart);
+                lineNode2.append(timeStamp, rawThetaChart);
+                lineNode3.append(timeStamp, rawAlphaChart);
+                lineNode4.append(timeStamp, rawBetaChart);
+                lineNode5.append(timeStamp, rawEMGChart);
 
 
 
@@ -436,19 +436,19 @@ $(document).ready(function() {
 
     streamingChart.streamTo(document.getElementById("chart-canvas"), 300 /*delay*/ ); //delay by one second because data aquisition is slow
 
-    var lineDelta = new TimeSeries();
-    var lineTheta = new TimeSeries();
-    var lineAlpha = new TimeSeries();
-    var lineBeta = new TimeSeries();
-    var lineEMG = new TimeSeries();
+    var lineNode1 = new TimeSeries();
+    var lineNode2 = new TimeSeries();
+    var lineNode3 = new TimeSeries();
+    var lineNode4 = new TimeSeries();
+    var lineNode5 = new TimeSeries();
     var lineNN = new TimeSeries();
 
 
-    streamingChart.addTimeSeries(lineDelta,  {strokeStyle: 'rgb(255, 255, 0)', lineWidth: 4 });
-    streamingChart.addTimeSeries(lineTheta,  {strokeStyle: 'rgb(185, 76, 255)',   lineWidth: 4 });
-    streamingChart.addTimeSeries(lineAlpha,  {strokeStyle: 'rgb(255, 127, 0)',   lineWidth: 4 });
-    streamingChart.addTimeSeries(lineBeta,   {strokeStyle: 'rgb(7, 185, 252)', lineWidth: 4 });
-    streamingChart.addTimeSeries(lineEMG,    {strokeStyle: 'rgb(246, 70, 91)', lineWidth: 4 });
+    streamingChart.addTimeSeries(lineNode1,  {strokeStyle: 'rgb(255, 255, 0)', lineWidth: 4 });
+    streamingChart.addTimeSeries(lineNode2,  {strokeStyle: 'rgb(185, 76, 255)',   lineWidth: 4 });
+    streamingChart.addTimeSeries(lineNode3,  {strokeStyle: 'rgb(255, 127, 0)',   lineWidth: 4 });
+    streamingChart.addTimeSeries(lineNode4,   {strokeStyle: 'rgb(7, 185, 252)', lineWidth: 4 });
+    streamingChart.addTimeSeries(lineNode5,    {strokeStyle: 'rgb(246, 70, 91)', lineWidth: 4 });
     streamingChart.addTimeSeries(lineNN,    {strokeStyle: 'rgb(72, 244, 68)',   lineWidth: 5 });
 
 
@@ -546,21 +546,21 @@ $(document).ready(function() {
     var Architect = synaptic.Architect;
 
     //** LSTM Options etc. **/
-    /*    
-const lstmOptions = {
+      /*
+var lstmOptions = {
         peepholes: Layer.connectionType.ALL_TO_ALL,
         hiddenToHidden: false,
         outputToHidden: false,
         outputToGates: false,
         inputToOutput: true,
     };
-    const neuralNet = new Architect.LSTM(4, 4, 4, 1, lstmOptions);  
+    var neuralNet = new Architect.LSTM(5, 5, 5, 1, lstmOptions);  
     */
     //LSTM options: https://github.com/cazala/synaptic/issues/217 
     //https://github.com/cazala/synaptic/issues/101
     //** END LSTM Options etc. **/
 
-    var neuralNet = new Architect.Perceptron(4, 4, 4, 1);
+ /  var neuralNet = new Architect.Perceptron(5, 5, 5, 1);
     var trainer = new Trainer(neuralNet);
     var trainingData;
 
@@ -571,12 +571,12 @@ const lstmOptions = {
         var timeStamp = new Date().getTime();
         var displayScore;
 
-        feedArray[0] = sensorDataArray[1];
-        feedArray[1] = sensorDataArray[2];
+        feedArray[0] = sensorDataArray[0];
+        feedArray[1] = sensorDataArray[1];
 
-        if (numInputs > 2) feedArray[2] = sensorDataArray[3];
-            
-        if (numInputs > 3) feedArray[3] = sensorDataArray[4];
+        if (numInputs > 2) feedArray[2] = sensorDataArray[2];
+        if (numInputs > 3) feedArray[3] = sensorDataArray[3];
+        if (numInputs > 4) feedArray[4] = sensorDataArray[4];
             
         //make sure we are in bounds of normalization
         for(var k = 0; k < numInputs; k++){
@@ -587,8 +587,6 @@ const lstmOptions = {
         // use trained NN or loaded NN
         if (haveNNFlag && activeNNFlag ) {
             scoreArray = neuralNet.activate(feedArray);
-        } else if (loadNNFlag) {
-            scoreArray = neuralNetwork1(feedArray);
         }
 
         displayScore = (scoreArray[0].toFixed(4) * 100 + oldScore*2) / 3; //smooth
@@ -597,9 +595,10 @@ const lstmOptions = {
 
         console.log("NN FEED ARRAY: " + feedArray);
         console.log("NN SCORE ARRAY: " + scoreArray);
+
         $(".message-nn-score").html(displayScore + '%');
         var rawlineNNChart = scoreArray[0].toFixed(4);
-        rawlineNNChart = (rawlineNNChart / 3) + 0.8;
+        rawlineNNChart = (rawlineNNChart / 3) + 0.6;
         lineNN.append(timeStamp, rawlineNNChart);
     }
 
@@ -607,6 +606,7 @@ const lstmOptions = {
 
     /**************************** TRAIN NN ******************************/
     function trainNN() {
+        console.log("Training NN....");
         var processedDataSession = new Array;
         var falseDataArray = new Array;
         var trueDataArray = new Array;
@@ -653,7 +653,7 @@ const lstmOptions = {
             getArchitect = new Architect.Perceptron(3, 3, 3, 1);
         } else if (rawNNArchitecture == '3:5:5:1') { */
            // getArchitect = new Architect.LSTM(4, 4, 4, 1);
-            getArchitect = new Architect.Perceptron(4, 4, 4, 1);
+            getArchitect = new Architect.Perceptron(5, 5, 5, 1);
      //   } 
 
 
@@ -674,11 +674,12 @@ const lstmOptions = {
 
             outputArray[0] = currentSample[12]; //true or false
 
-            inputArray[0] = currentSample[1];
-            inputArray[1] = currentSample[2];
+            inputArray[0] = currentSample[0];
+            inputArray[1] = currentSample[1];
 
-            if (numInputs > 2) inputArray[2] = currentSample[3];
-            if (numInputs > 3) inputArray[3] = currentSample[4];
+            if (numInputs > 2) inputArray[2] = currentSample[2];
+            if (numInputs > 3) inputArray[3] = currentSample[3];
+            if (numInputs > 4) inputArray[4] = currentSample[4];
 
             //make sure we are in bounds of normalization
 	        for(var k = 0; k < numInputs; k++){
@@ -715,8 +716,6 @@ const lstmOptions = {
             trainNNFlag = false;
             $('#activate-btn').addClass("haveNN");
             $('#export-btn').addClass("haveNN");
-
-      
     }
 
 
@@ -789,22 +788,43 @@ const lstmOptions = {
         $("#dump-print").addClass("active-print");
     });
 
-    $('#true-test-data').click(function() {
-        console.log("true test data button");
-        $('#true-test-data').addClass('active-data');
-        $('#connect','#false-test-data').removeClass('active-data');
 
-        //load and run test data
-        runData();
+    //connect button handler
+    $('#connect').click(function() {
+        console.log("connect button");
+
+        //"active-data" class controls active data type
+        $('#connect').addClass('active-data');
+        //turn off any recorded test data
+        $('#false-test-data').removeClass('active-data');
+        $('#true-test-data').removeClass('active-data');
+
     });
 
-    $('#false-test-data').click(function() {
-        console.log("false test data button");
-        $('#false-test-data').addClass('active-data');
-        $('#connect','#true-test-data').removeClass('active-data');
+    //true test data button handler
+    $('#true-test-data').click(function() {
+        console.log("true test data button");
+
+        //"active-data" class controls active data type
+        $('#true-test-data').addClass('active-data');
+        $('#connect').removeClass('active-data');
+        $('#false-test-data').removeClass('active-data');
 
         //load and run test data
-        runData();
+     //   runData();
+    });
+
+    //false test data button handler
+    $('#false-test-data').click(function() {
+        console.log("false test data button");
+
+        //"active-data" class controls active data type
+        $('#false-test-data').addClass('active-data');
+        $('#connect').removeClass('active-data');
+        $('#true-test-data').removeClass('active-data');
+
+        //load and run test data
+      //  runData();
     });
 
     function runData(){
@@ -818,14 +838,15 @@ const lstmOptions = {
 
             //are we using test data, and if so what data
             if ( $('#true-test-data').hasClass('active-data') ){
-                runTimeData = eegTestData;
-                testDataLength = eegTestData.length;
+                runTimeData = eegTrueTestData;
+                testDataLength = eegTrueTestData.length;
                 currentDataType = 'test-true';
             }else if( $('#false-test-data').hasClass('active-data') ){
-                runTimeData = eegTestData;
-                testDataLength = eegTestData.length;
+                runTimeData = eegFalseTestData;
+                testDataLength = eegFalseTestData.length;
                 currentDataType = 'test-false';
             } else{
+                console.log("terminating test data.....");
                 clearInterval(runDataHandle);
                 return;
             }
@@ -956,11 +977,11 @@ const lstmOptions = {
             rawBetaChart  = (rawBetaChart  / 4) + 1 * 0.1;
             rawEMGChart  = (rawEMGChart  / 4) + 0 * 0.1; */
 
-            if(rawChartData[0] != 0) lineDelta.append(timeStamp, rawChartData[0]);
-            if(rawChartData[1] != 0) lineTheta.append(timeStamp, rawChartData[1]);
-            if(rawChartData[2] != 0) lineAlpha.append(timeStamp, rawChartData[2]);
-            if(rawChartData[3] != 0) lineBeta.append(timeStamp, rawChartData[3]);
-            if(rawChartData[4] != 0) lineEMG.append(timeStamp, rawChartData[4]);
+            if(rawChartData[0] != 0) lineNode1.append(timeStamp, rawChartData[0]);
+            if(rawChartData[1] != 0) lineNode2.append(timeStamp, rawChartData[1]);
+            if(rawChartData[2] != 0) lineNode3.append(timeStamp, rawChartData[2]);
+            if(rawChartData[3] != 0) lineNode4.append(timeStamp, rawChartData[3]);
+            if(rawChartData[4] != 0) lineNode5.append(timeStamp, rawChartData[4]);
 
             //if data sample collection has been flagged
             if (getSamplesFlag > 0) {
