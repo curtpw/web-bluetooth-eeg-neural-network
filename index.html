@@ -347,11 +347,10 @@
     <div class="mdl-layout__drawer">
         <header>INFO</header>
         <div class="mdl-cell drawer-text-info">
-	        <p>This website is a companion to my <a href="https://hackaday.io/project/160618-35-nrf52-ecg-bracelet-hacked-into-eeg-glasses" target="_blank">EEG Glasses project</a>. The EEG Glasses connect and stream data to the website over <a href="https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web">Web Bluetooth</a>. YOU DON'T NEED A DEVICE TO USE THIS WEBSITE! I recorded data from my EEG Glasses. Just press one of the "Test Data" buttons and recorded EEG data will instantly appear.</p>
-
-	        <p>EEG is awesome but <b>the best thing about this website is <a href="https://github.com/cazala/synaptic" target="_blank">SynapticJS</a> neural network training and export. You can train neural networks on this site with recorded EEG data and run them on an Arduino or Arduino compatable microcontroller (and pretty much anything else)</b>. More importantly, this site is available on GitHub as both a repository and GitHub page. You can modify it and use it as a tool to create neural networks for other projects.</p>
-
-	        <p>The magic of SynapticJS is the <a href="https://github.com/cazala/synaptic/wiki/Networks" target="_blank">standalone export</a>. This is the only framework that allows you to <b>export both weights and activation function for a neural network as code snippet that will run on anything</b>. The export is just a bunch of floating point calculations so it can be cut and pasted into pretty much any programming language.</p>  
+          <p>EEG data from concentrating ('true' data) automatically loads with the site. Press the "RELAXATION TEST DATA" button to switch over to a recording of EEG data while relaxing and vice versa to switch back.</p>
+        </br><p>To train a neural network that can classify (distinguish) concentration vs relaxation EEG data, press the "COLLECT TRUE DATA" button while the concentration EEG recording is playing. You will need at least 200 samples. Then switch to the relaxation data and press the "COLLECT FALSE DATA" button. Press the "TRAIN NEURAL NETWORK" button and then the "ACTIVATE NEURAL NETWORK" button.</p>
+      </br><p>Because this tool uses a simple MLP (Multi Layer Perceptron) neural network, the raw data signal won't work well under most settings. Switch all the nodes to "variance" before collecting data for fast results.</p>
+    </br><p>If you want to select specific EEG waves for analysis, just set all the nodes to that frequency band</p>
 	    </div>
 
 	    <nav class="mdl-navigation drawer-navigation">
