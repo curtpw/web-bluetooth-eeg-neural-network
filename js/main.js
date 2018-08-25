@@ -560,7 +560,7 @@ var lstmOptions = {
     //https://github.com/cazala/synaptic/issues/101
     //** END LSTM Options etc. **/
 
-   var neuralNet = new Architect.Perceptron(5, 5, 5, 1);
+   var neuralNet = new Architect.Perceptron(5, 5, 1);
     var trainer = new Trainer(neuralNet);
     var trainingData;
 
@@ -653,7 +653,7 @@ var lstmOptions = {
             getArchitect = new Architect.Perceptron(3, 3, 3, 1);
         } else if (rawNNArchitecture == '3:5:5:1') { */
            // getArchitect = new Architect.LSTM(4, 4, 4, 1);
-            getArchitect = new Architect.Perceptron(5, 5, 5, 1);
+            getArchitect = new Architect.Perceptron(5, 5, 1);
      //   } 
 
 
