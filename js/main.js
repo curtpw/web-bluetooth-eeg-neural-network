@@ -560,7 +560,7 @@ var lstmOptions = {
     //https://github.com/cazala/synaptic/issues/101
     //** END LSTM Options etc. **/
 
- /  var neuralNet = new Architect.Perceptron(5, 5, 5, 1);
+   var neuralNet = new Architect.Perceptron(5, 5, 5, 1);
     var trainer = new Trainer(neuralNet);
     var trainingData;
 
