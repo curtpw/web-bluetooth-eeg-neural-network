@@ -380,26 +380,123 @@ $(document).ready(function() {
 	                sensorDataArray[6] = timeStamp;
 	            }
 
-                //update time series chart with normalized values
-                var rawDeltaChart = sensorDataArray[0];
-                var rawThetaChart = sensorDataArray[1];
-                var rawAlphaChart = sensorDataArray[2];
-                var rawBetaChart  = sensorDataArray[3];
-                var rawEMGChart  =  sensorDataArray[4];
+            //update sensor data rolling history for variance and averages calculations
+            for(let i = 0; i < 9; i++){
+                sensorDataHistory[i] = sensorDataHistory[i + 1];
+            }
+            sensorDataHistory[9] = sensorDataArray;
+         //   sensorDataHistory[9] = [runTimeData[runIndex][0].toFixed(3), runTimeData[runIndex][1].toFixed(3), runTimeData[runIndex][2].toFixed(3), runTimeData[runIndex][3].toFixed(3), runTimeData[runIndex][4].toFixed(3)];
+          //  console.log("data history: " + sensorDataHistory);
 
-                //sensor values in bottom 2/3 of chart , 1/10 height each
+            //calculate averages
+            let sensorDataAverages = new Array(6).fill(0);
+            for(let j = 0; j < 10; j++){
+                for(let k = 0; k < 5; k++){
+                    sensorDataAverages[k] = sensorDataAverages[k] + Number(sensorDataHistory[j][k]);
+                   // console.log("data average total: " + sensorDataAverages[k] + "sensor data history item: " + sensorDataHistory[j][k]);
+                }
+            }
+            for(let m = 0; m < 5; m++){
+                sensorDataAverages[m] = sensorDataAverages[m] / 10;
+            }
+
+            //now that we have averages we can calculate variance from average
+            let sensorDataVariance = new Array(6).fill(0);
+            for(let j = 0; j < 10; j++){
+                for(let k = 0; k < 5; k++){
+                    sensorDataVariance[k] = sensorDataVariance[k] + Math.abs(sensorDataAverages[k] - Number(sensorDataHistory[j][k]) );
+                }
+            }
+            for(let m = 0; m < 5; m++){
+                sensorDataVariance[m] = (sensorDataVariance[m] / 10) / sensorDataAverages[m];
+            }
+          
+            //node data selection
+            let nodeCodes = new Array(5).fill(0);
+            nodeCodes[0] = $('#code-node1').val();
+            nodeCodes[1] = $('#code-node2').val();
+            nodeCodes[2] = $('#code-node3').val();
+            nodeCodes[3] = $('#code-node4').val();
+            nodeCodes[4] = $('#code-node5').val();
+
+          //  console.log("nodeCodes: " + nodeCodes[0] + " " + nodeCodes[1] + " " + nodeCodes[2] + " " + nodeCodes[3] + " " + nodeCodes[4]);
+
+            let nodeDataTypes = new Array(5).fill(0);
+
+            let nodeTempData = sensorDataArray; //for switching raw vals between nodes so we don't overwrite primary array
+            for(let h = 0; h < 5; h++){
+                //delta wave vals
+                if(nodeCodes[h] == "DR"){      sensorDataArray[h] = nodeTempData[0];        nodeDataTypes[h] = "R"; }
+                else if(nodeCodes[h] == "DA"){ sensorDataArray[h] = sensorDataAverages[0];  nodeDataTypes[h] = "A"; }
+                else if(nodeCodes[h] == "DV"){ sensorDataArray[h] = sensorDataVariance[0];  nodeDataTypes[h] = "V"; }
+                //theta wave vals
+                else if(nodeCodes[h] == "TR"){ sensorDataArray[h] = nodeTempData[1];        nodeDataTypes[h] = "R"; }
+                else if(nodeCodes[h] == "TA"){ sensorDataArray[h] = sensorDataAverages[1];  nodeDataTypes[h] = "A"; }
+                else if(nodeCodes[h] == "TV"){ sensorDataArray[h] = sensorDataVariance[1];  nodeDataTypes[h] = "V"; }
+                //alpha wave vals
+                else if(nodeCodes[h] == "AR"){ sensorDataArray[h] = nodeTempData[2];        nodeDataTypes[h] = "R"; }
+                else if(nodeCodes[h] == "AA"){ sensorDataArray[h] = sensorDataAverages[2];  nodeDataTypes[h] = "A"; }
+                else if(nodeCodes[h] == "AV"){ sensorDataArray[h] = sensorDataVariance[2];  nodeDataTypes[h] = "V"; }
+                //beta wave vals
+                else if(nodeCodes[h] == "BR"){ sensorDataArray[h] = nodeTempData[3];        nodeDataTypes[h] = "R"; }
+                else if(nodeCodes[h] == "BA"){ sensorDataArray[h] = sensorDataAverages[3];  nodeDataTypes[h] = "A"; }
+                else if(nodeCodes[h] == "BV"){ sensorDataArray[h] = sensorDataVariance[3];  nodeDataTypes[h] = "V"; }
+                //emg wave vals
+                else if(nodeCodes[h] == "ER"){ sensorDataArray[h] = nodeTempData[4];        nodeDataTypes[h] = "R"; }
+                else if(nodeCodes[h] == "EA"){ sensorDataArray[h] = sensorDataAverages[4];  nodeDataTypes[h] = "A"; }
+                else if(nodeCodes[h] == "EV"){ sensorDataArray[h] = sensorDataVariance[4];  nodeDataTypes[h] = "V"; }
+                else{ sensorDataArray[h] = 0; }
+            } 
+
+
+            console.log("Loaded Data: " + sensorDataArray[0] + " " + sensorDataArray[1] + " " + sensorDataArray[2] + " " + sensorDataArray[3] + " " + sensorDataArray[4] );
+
+            //update time series chart with normalized values
+            let rawChartData = new Array(5).fill(0);
+
+            //modify graph appearence based on data type
+             for(let q = 0; q < 5; q++){
+                if(nodeDataTypes[q] == 'R'){
+                    rawChartData[q] = (sensorDataArray[q] / 4) + (q) * 0.1;
+                } else if( nodeDataTypes[q] == 'A'){
+                    rawChartData[q] = (sensorDataArray[q] / 3) + (q) * 0.1;
+                } else if (nodeDataTypes[q] == 'V'){
+                    rawChartData[q] = (sensorDataArray[q] / 1) + (q) * 0.1;
+                }
+            }           
+
+       /*     var rawDeltaChart = sensorDataArray[0];
+            var rawThetaChart = sensorDataArray[1];
+            var rawAlphaChart = sensorDataArray[2];
+            var rawBetaChart  = sensorDataArray[3];
+            var rawEMGChart  =  sensorDataArray[4];
+
+            //sensor values in bottom 2/3 of chart , 1/10 height each
+            rawDeltaChart = (rawDeltaChart / 4) + 4 * 0.1;
+            rawThetaChart = (rawThetaChart / 4) + 3 * 0.1;
+            rawAlphaChart = (rawAlphaChart / 4) + 2 * 0.1;
+            rawBetaChart  = (rawBetaChart  / 4) + 1 * 0.1;
+            rawEMGChart  = (rawEMGChart  / 4) + 0 * 0.1; */
+
+            if(rawChartData[0] != 0) lineNode1.append(timeStamp, rawChartData[0]);
+            if(rawChartData[1] != 0) lineNode2.append(timeStamp, rawChartData[1]);
+            if(rawChartData[2] != 0) lineNode3.append(timeStamp, rawChartData[2]);
+            if(rawChartData[3] != 0) lineNode4.append(timeStamp, rawChartData[3]);
+            if(rawChartData[4] != 0) lineNode5.append(timeStamp, rawChartData[4]);  
+
+
+           /*     //sensor values in bottom 2/3 of chart , 1/10 height each
                 rawDeltaChart = (rawDeltaChart / 0.5) + 2 * 0.1;
                 rawThetaChart = (rawThetaChart / 0.5) + 1 * 0.1;
                 rawAlphaChart = (rawAlphaChart / 0.5) + 0 * 0.1;
                 rawBetaChart  = (rawBetaChart  / 4) + 6 * 0.1;
-                rawEMGChart  = (rawEMGChart  / 3) + 4 * 0.1;
+                rawEMGChart  = (rawEMGChart  / 3) + 4 * 0.1; 
 
                 lineNode1.append(timeStamp, rawDeltaChart);
                 lineNode2.append(timeStamp, rawThetaChart);
                 lineNode3.append(timeStamp, rawAlphaChart);
                 lineNode4.append(timeStamp, rawBetaChart);
-                lineNode5.append(timeStamp, rawEMGChart);
-
+                lineNode5.append(timeStamp, rawEMGChart); */
 
 
                 //if data sample collection has been flagged
@@ -1015,7 +1112,7 @@ var lstmOptions = {
             $(this).html(value);
         });
 
-        if( $(this).hasClass('nn-architecture') ){ $('.range-slider__value.nn-architecture').html('4:4:4:1'); }
+      /*  if( $(this).hasClass('nn-architecture') ){ $('.range-slider__value.nn-architecture').html('4:4:4:1'); }
 
         range.on('input', function(){
             var labels = ['2:1', '3:4:4:1', '4:1', '4:4:1', '4:3:3:1', '4:4:4:1'];
@@ -1023,8 +1120,8 @@ var lstmOptions = {
 
             if( $(this).hasClass('nn-architecture') ){ $(this).next(value).html( labels[this.value] ); }
           
-          });
-        });
+          }); */
+        }); 
     }
 
     rangeSlider();
@@ -1032,7 +1129,7 @@ var lstmOptions = {
     //RANGE SLIDER EVENT HANDLER
     $( ".range-slider" ).each(function() {
 
-        if($(this).hasClass("nn-architecture")){
+      /*  if($(this).hasClass("nn-architecture")){
             // Add labels to slider whose values 
             // are specified by min, max and whose
             // step is set to 1
@@ -1058,7 +1155,7 @@ var lstmOptions = {
                 if(s == vals){ el = $('<label>'+ labels[s] +'</label>').css('left',( -20 + Math.abs((s-min)/vals) *($input.width() -24)+'px')); }
                 $(this).append(el);
             }
-        }  
+        }  */
     });
 
     //TEST DATA AUTOMATICALLY LOADS WHEN SITE LOADS
