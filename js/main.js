@@ -1112,7 +1112,7 @@ var lstmOptions = {
             $(this).html(value);
         });
 
-      /*  if( $(this).hasClass('nn-architecture') ){ $('.range-slider__value.nn-architecture').html('4:4:4:1'); }
+        if( $(this).hasClass('nn-architecture') ){ $('.range-slider__value.nn-architecture').html('4:4:4:1'); }
 
         range.on('input', function(){
             var labels = ['2:1', '3:4:4:1', '4:1', '4:4:1', '4:3:3:1', '4:4:4:1'];
@@ -1120,7 +1120,7 @@ var lstmOptions = {
 
             if( $(this).hasClass('nn-architecture') ){ $(this).next(value).html( labels[this.value] ); }
           
-          }); */
+          }); 
         }); 
     }
 
@@ -1129,7 +1129,7 @@ var lstmOptions = {
     //RANGE SLIDER EVENT HANDLER
     $( ".range-slider" ).each(function() {
 
-      /*  if($(this).hasClass("nn-architecture")){
+      //  if($(this).hasClass("nn-architecture")){
             // Add labels to slider whose values 
             // are specified by min, max and whose
             // step is set to 1
@@ -1144,7 +1144,7 @@ var lstmOptions = {
             var increment = parseInt($input.attr("increment"));
             var vals = max - min; //opt.max - opt.min;
             //if(min < 0){ vals = max + min; }
-            var labels = ['2:1', '3:4:4:1', '4:1', '4:3:1', '4:3:3:1', '4:4:4:1'];
+          //  var labels = ['2:1', '3:4:4:1', '4:1', '4:3:1', '4:3:3:1', '4:4:4:1'];
             
             // Space out values
             for (var i = 0; (i * increment) <= vals; i++) {
@@ -1155,7 +1155,7 @@ var lstmOptions = {
                 if(s == vals){ el = $('<label>'+ labels[s] +'</label>').css('left',( -20 + Math.abs((s-min)/vals) *($input.width() -24)+'px')); }
                 $(this).append(el);
             }
-        }  */
+      //  }  
     });
 
     //TEST DATA AUTOMATICALLY LOADS WHEN SITE LOADS
